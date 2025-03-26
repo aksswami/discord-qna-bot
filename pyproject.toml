@@ -2,14 +2,21 @@
 name = "discord-qna-bot"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"] # TODO: Update with your details
+authors = ["Your Name <you@example.com>"]    # TODO: Update with your details
 readme = "README.md"
-packages = [{include = "discord_qna_bot"}]
+packages = [{ include = "discord_qna_bot" }]
 
 [tool.poetry.dependencies]
-python = "^3.10" # Specify your desired Python version
+python = "^3.10"                              # Specify your desired Python version
 httpx = "^0.28.1"
 pydantic = "^2.10.6"
+llama-index-core = "^0.12.12"
+llama-index-vector-stores-faiss = "^0.3.0"
+llama-index-embeddings-huggingface = "^0.5.2"
+llama-index-llms-gemini = "^0.4.13"
+python-dotenv = "^1.1.0"
+faiss-cpu = "^1.7.4"
+llama-index-llms-openai = "^0.3.27"
 
 [tool.poetry.scripts]
 discord-qna-bot = "discord_qna_bot.main:main"
