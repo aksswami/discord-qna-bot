@@ -17,9 +17,12 @@ llama-index-llms-gemini = "^0.4.13"
 python-dotenv = "^1.1.0"
 faiss-cpu = "^1.7.4"
 llama-index-llms-openai = "^0.3.27"
+fastapi = "^0.110.0"
+uvicorn = "^0.29.0"
 
 [tool.poetry.scripts]
 discord-qna-bot = "discord_qna_bot.main:main"
+discord-oauth-server = "discord_qna_bot.run_oauth_server:main"
 
 
 [build-system]
