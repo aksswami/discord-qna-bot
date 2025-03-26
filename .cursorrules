@@ -1,0 +1,2 @@
+Use python httpx library for async http client https://www.python-httpx.org
+For dataclasses use pydantic data class
