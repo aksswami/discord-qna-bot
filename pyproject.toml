@@ -2,7 +2,7 @@
 name = "discord-qna-bot"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]    # TODO: Update with your details
+authors = ["AlexAmit<you@example.com>"] # TODO: Update with your details
 readme = "README.md"
 packages = [{ include = "discord_qna_bot" }]
 
