@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import httpx
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 # Pydantic Models
@@ -12,9 +12,11 @@ class EmojiModel(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
 
+
 class ReactionCountDetails(BaseModel):
     burst: int
     normal: int
+
 
 class ReactionModel(BaseModel):
     count: int
@@ -24,17 +26,20 @@ class ReactionModel(BaseModel):
     emoji: EmojiModel
     burst_colors: List[str]
 
+
 class AuthorModel(BaseModel):
     username: str
     discriminator: str
     id: str
     avatar: Optional[str] = None
 
+
 class MessageReferenceModel(BaseModel):
     type: int = 0
     channel_id: str
     message_id: str
     guild_id: Optional[str] = None
+
 
 class MessageModel(BaseModel):
     id: str
@@ -58,6 +63,7 @@ class MessageModel(BaseModel):
     flags: Optional[int] = None
     components: List[Dict[str, Any]] = []
 
+
 class ChannelModel(BaseModel):
     id: str
     guild_id: Optional[str] = None
@@ -72,6 +78,7 @@ class ChannelModel(BaseModel):
     parent_id: Optional[str] = None
     default_auto_archive_duration: Optional[int] = None
 
+
 class GuildModel(BaseModel):
     id: str
     name: str
@@ -83,12 +90,13 @@ class GuildModel(BaseModel):
     approximate_member_count: Optional[int] = None
     approximate_presence_count: Optional[int] = None
 
+
 class DiscordAPI:
     def __init__(self, api_token: str):
         self.api_base = "https://discord.com/api/v10"
         self.headers = {
             "Authorization": f"Bot {api_token}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
         self.client = httpx.AsyncClient(headers=self.headers, timeout=30.0)
 
@@ -104,37 +112,35 @@ class DiscordAPI:
 
     async def get_guild_channels(self, guild_id: str) -> List[ChannelModel]:
         """Get channels for a specific guild"""
-        response = await self.client.get(
-            f"{self.api_base}/guilds/{guild_id}/channels"
-        )
+        response = await self.client.get(f"{self.api_base}/guilds/{guild_id}/channels")
         response.raise_for_status()
         return [ChannelModel(**channel) for channel in response.json()]
 
     async def get_channel_messages(
-        self, 
-        channel_id: str, 
+        self,
+        channel_id: str,
         limit: int = 50,
         before: Optional[str] = None,
         after: Optional[str] = None,
-        around: Optional[str] = None
+        around: Optional[str] = None,
     ) -> List[MessageModel]:
         """Get messages from a specific channel with pagination support"""
-        params = {'limit': min(limit, 100)}  # Discord's max limit is 100
-        
+        params = {"limit": min(limit, 100)}  # Discord's max limit is 100
+
         # Only one of these parameters can be used at a time
         if before:
-            params['before'] = before
+            params["before"] = before
         elif after:
-            params['after'] = after
+            params["after"] = after
         elif around:
-            params['around'] = around
+            params["around"] = around
 
         response = await self.client.get(
-            f"{self.api_base}/channels/{channel_id}/messages",
-            params=params
+            f"{self.api_base}/channels/{channel_id}/messages", params=params
         )
         response.raise_for_status()
         return [MessageModel(**message) for message in response.json()]
+
 
 async def main() -> List[MessageModel]:
     # Replace with your bot token
@@ -161,19 +167,20 @@ async def main() -> List[MessageModel]:
             return
 
         # Find first text channel (type 0 is text channel)
-        text_channel = next((channel for channel in channels if channel.type == 0), None)
+        text_channel = next(
+            (channel for channel in channels if channel.type == 0), None
+        )
         if not text_channel:
             print("No text channels found")
             return
 
         print(f"Getting messages from channel: {text_channel.name}")
-        
+
         # Get messages from the first text channel
         messages = await discord.get_channel_messages(
-            text_channel.id,
-            limit=10  # Get last 10 messages
+            text_channel.id, limit=10  # Get last 10 messages
         )
-        
+
         # Print messages with proper formatting
         for message in messages:
             print(f"{message.author.username}: {message.content}")
@@ -189,6 +196,7 @@ async def main() -> List[MessageModel]:
         print(f"An HTTP error occurred: {e}")
     finally:
         await discord.close()
+
 
 if __name__ == "__main__":
     messages = asyncio.run(main())

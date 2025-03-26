@@ -1,14 +1,13 @@
 from datetime import datetime
 from typing import Any, Dict, List
 
-from llama_index.core import Settings, VectorStoreIndex
+from llama_index.core import VectorStoreIndex
 from llama_index.core.schema import TextNode
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.vector_stores.faiss import FaissVectorStore
 from pydantic import BaseModel
 
 
-# Models for Discord messages (simplified from your example)
 class AuthorModel(BaseModel):
     username: str
     id: str
@@ -158,13 +157,8 @@ def query_discord_messages(
     index: VectorStoreIndex, query: str, top_k: int
 ) -> List[Dict]:
     """Query the index for relevant messages"""
-    # Create query engine with explicit retriever to bypass LLM usage
     retriever = index.as_retriever(similarity_top_k=top_k)
-
-    # Retrieve nodes directly without using LLM
     nodes = retriever.retrieve(query)
-
-    # Format results
     results = []
     for node in nodes:
         results.append(
@@ -175,16 +169,9 @@ def query_discord_messages(
 
 
 def main():
-    # Get sample messages
     messages = get_sample_messages()
-
-    # Process messages
     processed_data = process_messages(messages)
-
-    # Create index
     index = create_llama_index(processed_data)
-
-    # Example query
     query = "What does the fox say?"
     results = query_discord_messages(index, query, top_k=10)
 
