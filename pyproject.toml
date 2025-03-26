@@ -22,6 +22,10 @@ fastapi = "^0.110.0"
 uvicorn = "^0.29.0"
 colorama = "^0.4.6"
 
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.9.0"
+types-colorama = "^0.4.15.20240311"
+
 [tool.poetry.scripts]
 discord-qna-bot = "src.main:main"
 discord-oauth-server = "src.run_oauth_server:main"
@@ -30,3 +34,31 @@ discord-oauth-server = "src.run_oauth_server:main"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+# Add specific module overrides for third-party libraries without type stubs
+[[tool.mypy.overrides]]
+module = [
+    "llama_index.*",
+    "faiss.*"
+]
+ignore_missing_imports = true
