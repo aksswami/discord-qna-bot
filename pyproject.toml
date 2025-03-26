@@ -20,6 +20,7 @@ llama-index-llms-openai = "^0.3.27"
 pydantic-settings = "^2.2.1"
 fastapi = "^0.110.0"
 uvicorn = "^0.29.0"
+colorama = "^0.4.6"
 
 [tool.poetry.scripts]
 discord-qna-bot = "src.main:main"

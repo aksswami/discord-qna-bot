@@ -9,6 +9,7 @@ from typing import Optional
 
 import httpx
 import uvicorn
+from colorama import Fore, Style
 
 from .client.discord_api import DiscordAPI, TokenType
 from .config import Config
@@ -166,53 +167,54 @@ async def async_main_bot_flow():
     config = Config()
     discord = DiscordAPI(token=config.discord.bot_token, token_type=TokenType.BOT)
     guilds = await discord.get_current_user_guilds()
-    print(f"Found {len(guilds)} guilds {guilds}")
+    
     if not guilds:
-        print("No guilds found")
+        print(f"{Fore.RED}No guilds found{Style.RESET_ALL}")
         return
     channels = []
     for guild in guilds:
-        print(f"Getting channels for guild: {guild.name}")
+        print(f"\n{Fore.BLUE}=== Processing Guild: {guild.name} (ID: {guild.id}) ==={Style.RESET_ALL}")
         try:
             channels = await discord.get_guild_channels(guild.id)
             if not channels:
-                print("No channels found")
+                print(f"{Fore.RED}No channels found{Style.RESET_ALL}")
                 return
         except Exception as e:
-            print(f"Error fetching channels for guild {guild.name}: {e}")
+            print(f"{Fore.RED}Error fetching channels for guild {guild.name}: {e}{Style.RESET_ALL}")
 
     channels = [channel for channel in channels if channel.type == 0]
     all_messages = []
     for channel in channels:
-        print(f"Getting messages from channel: {channel.name}")
+        print(f"\n{Fore.MAGENTA}=== Processing Channel: {channel.name} (ID: {channel.id}) ==={Style.RESET_ALL}")
         try:
             messages = await discord.get_channel_messages(channel.id)
             all_messages.extend(messages)
-            print(f"Found {len(messages)} messages in channel {channel.name}")
+            print(f"\n{Fore.GREEN}=== Found {len(messages)} messages in channel {channel.name} ==={Style.RESET_ALL}")
         except Exception as e:
-            print(f"Error fetching messages from channel {channel.name}: {e}")
+            print(f"{Fore.RED}Error fetching messages from channel {channel.name}: {e}{Style.RESET_ALL}")
     
     message_processor = MessageProcessor(all_messages)
     processed_data = message_processor.process_messages()
     index = message_processor.create_llama_index(processed_data)
-    min_score = float(input("Enter minimum similarity score threshold (0.0 to 1.0): "))
+    min_score = float(input(f"{Fore.YELLOW}Enter minimum similarity score threshold (0.0 to 1.0): {Style.RESET_ALL}"))
     while min_score < 0.0 or min_score > 1.0:
-        print("Score must be between 0.0 and 1.0")
-        min_score = float(input("Enter minimum similarity score threshold (0.0 to 1.0): "))
+        print(f"{Fore.RED}Score must be between 0.0 and 1.0{Style.RESET_ALL}")
+        min_score = float(input(f"{Fore.YELLOW}Enter minimum similarity score threshold (0.0 to 1.0): {Style.RESET_ALL}"))
 
     while True:
-        query = input("Enter a query: ")
+        query = input(f"{Fore.CYAN}Enter a query: {Style.RESET_ALL}")
         results = message_processor.query_discord_messages(index, query, top_k=10)
-        print(f"\nQuery: {query}")
-        print("\nResults:")
+
+        print(f"\n{Fore.CYAN}Query:{Style.RESET_ALL} {query}")
+        print(f"\n{Fore.CYAN}Results:{Style.RESET_ALL}")
         for i, result in enumerate(results, 1):
             if result['score'] >= min_score:
-                print(f"\n--- Result {i} ---")
-                print(f"Text: {result['text']}")
-                print(f"Score: {result['score']:.4f}")
-                print(f"Author: {result['metadata']['author']}")
-                print(f"Timestamp: {result['metadata']['timestamp']}")
-        print("---")
+                print(f"\n{Fore.YELLOW}--- Result {i} ---{Style.RESET_ALL}")
+                print(f"{Fore.GREEN}Text:{Style.RESET_ALL} {result['text']}")
+                print(f"{Fore.GREEN}Score:{Style.RESET_ALL} {result['score']:.4f}")
+                print(f"{Fore.GREEN}Author:{Style.RESET_ALL} {result['metadata']['author']}")
+                print(f"{Fore.GREEN}Timestamp:{Style.RESET_ALL} {result['metadata']['timestamp']}")
+        print("\n\n---")
 
 
 
