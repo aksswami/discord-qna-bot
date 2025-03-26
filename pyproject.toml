@@ -9,6 +9,9 @@ packages = [{include = "discord_qna_bot"}]
 [tool.poetry.dependencies]
 python = "^3.10" # Specify your desired Python version
 
+[tool.poetry.scripts]
+discord-qna-bot = "discord_qna_bot.main:main"
+
 
 [build-system]
 requires = ["poetry-core"]
