@@ -10,11 +10,11 @@ from src.services.rag_service import RAGService
 class MessageService:
     """Service for handling Discord message retrieval and querying."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the message service."""
         self.discord_service = DiscordService()
-        self.rag_service = None
-        self._messages = []
+        self.rag_service: Optional[RAGService] = None
+        self._messages: List[MessageModel] = []
 
     async def close(self) -> None:
         """Close the underlying services."""
@@ -42,6 +42,8 @@ class MessageService:
         """Query messages using RAG."""
         if not self.rag_service:
             await self.process_messages()
+            if not self.rag_service:
+                return []
 
         results = self.rag_service.query_messages(query, top_k=top_k)
 

@@ -1,6 +1,6 @@
 """Discord API client for interacting with Discord's REST API."""
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import httpx
 
@@ -105,7 +105,7 @@ class DiscordClient:
         around: Optional[str] = None,
     ) -> List[MessageModel]:
         """Get messages from a specific channel with pagination support."""
-        params = {"limit": min(limit, 100)}  # Discord's max limit is 100
+        params: Dict[str, int|str] = {"limit": min(limit, 100)}  # Discord's max limit is 100
 
         # Only one of these parameters can be used at a time
         if before:

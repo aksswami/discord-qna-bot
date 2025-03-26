@@ -25,8 +25,8 @@ class RAGService:
             message_dict[msg.id] = msg.model_dump()
         return message_dict
 
-    def create_index(self, processed_data: Dict[str, Any]) -> VectorStoreIndex:
-        """Create a vector index from processed Discord messages."""
+    def create_index(self, processed_data: Dict[str, Any]) -> None:
+        """Create LlamaIndex from processed Discord messages."""
         # Create nodes from messages
         nodes = []
 
@@ -35,8 +35,8 @@ class RAGService:
             text = f"{msg_data['author']['username']} said: {msg_data['content']}"
 
             # Add reply context if available
-            if msg_data.get("message_reference"):
-                parent_id = msg_data["message_reference"]["message_id"]
+            if msg_data.get('message_reference'):
+                parent_id = msg_data['message_reference']['message_id']
                 if parent_id in processed_data:
                     parent = processed_data[parent_id]
                     text = f"{text}\n[In reply to {parent['author']['username']} who said: {parent['content']}]"
@@ -46,13 +46,9 @@ class RAGService:
                 text=text,
                 metadata={
                     "message_id": msg_id,
-                    "author": msg_data["author"]["username"],
-                    "timestamp": (
-                        msg_data["timestamp"]
-                        if isinstance(msg_data["timestamp"], str)
-                        else msg_data["timestamp"].isoformat()
-                    ),
-                    "channel_id": msg_data["channel_id"],
+                    "author": msg_data['author']['username'],
+                    "timestamp": msg_data['timestamp'].isoformat(),
+                    "channel_id": msg_data['channel_id'],
                 },
             )
             nodes.append(node)
@@ -70,12 +66,9 @@ class RAGService:
         vector_store = FaissVectorStore(faiss_index=faiss_index)
 
         # Create index
-        index = VectorStoreIndex(
+        self._index = VectorStoreIndex(
             nodes=nodes, vector_store=vector_store, embed_model=embed_model
         )
-
-        self._index = index
-        return index
 
     def query_messages(self, query: str, top_k: int = 10) -> List[Dict]:
         """Query the index for relevant messages."""

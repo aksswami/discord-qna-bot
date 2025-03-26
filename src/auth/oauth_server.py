@@ -2,7 +2,7 @@
 
 import asyncio
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Dict, Optional
 
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
@@ -24,13 +24,13 @@ token_manager = TokenManager()
 
 
 @app.get("/")
-async def root():
+async def root() -> Dict[str, str]:
     """Return a status message indicating the server is running."""
     return {"message": "Discord OAuth Server is running"}
 
 
 @app.get("/auth", dependencies=[Depends(get_discord_client)])
-async def auth():
+async def auth() -> RedirectResponse:
     """Redirect to Discord OAuth authorization page."""
     discord_client = get_discord_client(settings.discord)
     auth_url = discord_client.get_authorization_url(
@@ -40,7 +40,7 @@ async def auth():
 
 
 @app.get("/oauth2/callback")
-async def callback(code: str, state: Optional[str] = None):
+async def callback(code: str, state: Optional[str] = None) -> Dict[str, str|int]:
     """Handle the OAuth callback from Discord."""
     try:
         print(f"Received code from callback: {code}")
@@ -75,14 +75,3 @@ async def callback(code: str, state: Optional[str] = None):
         raise HTTPException(
             status_code=400, detail=f"Error during OAuth flow: {str(e)}"
         )
-
-
-def start_server(
-    host: str = None, port: int = None, server_config: ServerConfig = None
-):
-    """Start the FastAPI server."""
-    # Use provided values or fall back to settings
-    host = host or server_config.host
-    port = port or server_config.port
-
-    uvicorn.run(app, host=host, port=port)

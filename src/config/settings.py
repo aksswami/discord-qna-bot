@@ -5,9 +5,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class DiscordConfig(BaseModel):
-    client_id: str
-    client_secret: str
-    redirect_uri: str
+    client_id: str = ""
+    client_secret: str = ""
+    redirect_uri: str = ""
     bot_token: Optional[str] = None
 
 
@@ -19,7 +19,7 @@ class ServerConfig(BaseModel):
 class Settings(BaseSettings):
     """Application settings loaded from environment variables or .env file"""
 
-    discord: DiscordConfig
+    discord: DiscordConfig = DiscordConfig()
     server: ServerConfig = ServerConfig()
 
     model_config = SettingsConfigDict(
