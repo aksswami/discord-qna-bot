@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import RedirectResponse
@@ -7,6 +6,7 @@ import asyncio
 from urllib.parse import urlencode
 
 from playground.discord_api import DiscordAPI, OAuth2TokenResponse
+from discord_qna_bot.config import settings
 
 app = FastAPI(title="Discord OAuth Server")
 
@@ -51,8 +51,11 @@ async def callback(code: str, state: Optional[str] = None):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error during OAuth flow: {str(e)}")
 
-def start_server(host: str = "0.0.0.0", port: int = 8000):
+def start_server(host: str = None, port: int = None):
     """Start the FastAPI server"""
+    # Use provided values or fall back to settings
+    host = host or settings.host
+    port = port or settings.port
     uvicorn.run(app, host=host, port=port)
 
 if __name__ == "__main__":

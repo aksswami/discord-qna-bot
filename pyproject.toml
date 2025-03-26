@@ -17,6 +17,7 @@ llama-index-llms-gemini = "^0.4.13"
 python-dotenv = "^1.1.0"
 faiss-cpu = "^1.7.4"
 llama-index-llms-openai = "^0.3.27"
+pydantic-settings = "^2.2.1"
 fastapi = "^0.110.0"
 uvicorn = "^0.29.0"
 
