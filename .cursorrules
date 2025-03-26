@@ -1,2 +1,10 @@
-Use python httpx library for async http client https://www.python-httpx.org
-For dataclasses use pydantic data class
+1. Please use poetry to manage dependencies instead of pip
+2. Please maintain SOLID and DRY principles when writing your code
+3. For API request, use python `httpx` library for async http client, instead of `requests`
+4. Follow below coding practices:
+   - Use f-string for string interpolation
+   - Add type annotations to all function signatures
+   - Don't add doc-string and comments to code and try to make your code self-explanatory instead
+5. For credentials, please use environment variables instead of hardcoding them and store them in `.env` file, and use dotenv to load them as configuration of the application
+6. For dataclasses use pydantic data class
+7. Please suggest high level solution plan at the beginning of the code implementation, only start to write code after your plan is approved

@@ -30,6 +30,12 @@ class AuthorModel(BaseModel):
     id: str
     avatar: Optional[str] = None
 
+class MessageReferenceModel(BaseModel):
+    type: int = 0
+    channel_id: str
+    message_id: str
+    guild_id: Optional[str] = None
+
 class MessageModel(BaseModel):
     id: str
     content: str
@@ -46,6 +52,11 @@ class MessageModel(BaseModel):
     reactions: Optional[List[ReactionModel]] = None
     pinned: bool
     type: int
+    message_reference: Optional[MessageReferenceModel] = None
+    referenced_message: Optional["MessageModel"] = None
+    position: Optional[int] = None
+    flags: Optional[int] = None
+    components: List[Dict[str, Any]] = []
 
 class ChannelModel(BaseModel):
     id: str
@@ -125,7 +136,7 @@ class DiscordAPI:
         response.raise_for_status()
         return [MessageModel(**message) for message in response.json()]
 
-async def main():
+async def main() -> List[MessageModel]:
     # Replace with your bot token
     # application_id = "1354293773743427744"
     # public_key = "bd841f4c74d517c635df6f3e2fd4ea5677b7bfa38b1be476abb69b4a8af222ac"
@@ -172,6 +183,7 @@ async def main():
                 print(f"  Reactions: {len(message.reactions)}")
             print(f"  Sent at: {message.timestamp}")
             print("---")
+        return messages
 
     except httpx.HTTPError as e:
         print(f"An HTTP error occurred: {e}")
@@ -179,4 +191,4 @@ async def main():
         await discord.close()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    messages = asyncio.run(main())
