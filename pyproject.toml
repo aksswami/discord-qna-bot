@@ -2,9 +2,9 @@
 name = "discord-qna-bot"
 version = "0.1.0"
 description = ""
-authors = ["AlexAmit<you@example.com>"] # TODO: Update with your details
+authors = ["Alex Amit <you@example.com>"] # TODO: Update with your details
 readme = "README.md"
-packages = [{ include = "discord_qna_bot" }]
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"                              # Specify your desired Python version
@@ -22,8 +22,8 @@ fastapi = "^0.110.0"
 uvicorn = "^0.29.0"
 
 [tool.poetry.scripts]
-discord-qna-bot = "discord_qna_bot.main:main"
-discord-oauth-server = "discord_qna_bot.run_oauth_server:main"
+discord-qna-bot = "src.main:main"
+discord-oauth-server = "src.run_oauth_server:main"
 
 
 [build-system]
